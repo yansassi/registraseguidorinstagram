@@ -1,4 +1,4 @@
-selenium
 streamlit
 matplotlib
 pandas
+supabase-py
