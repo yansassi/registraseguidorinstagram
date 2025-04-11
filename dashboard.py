@@ -1,18 +1,29 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from supabase import create_client, Client
+import requests
 
 # Configurações do Supabase
-url = "https://irxhzelkcclzlgupwjgd.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyeGh6ZWxrY2NsemxndXB3amdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDc1NzQsImV4cCI6MjA1OTk4MzU3NH0.eN0l8KuMK57ipLprKtrjjRzDFgdI1I0u79bzVWIaY-Q"
-supabase: Client = create_client(url, key)
+SUPABASE_URL = "https://irxhzelkcclzlgupwjgd.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyeGh6ZWxrY2NsemxndXB3amdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDc1NzQsImV4cCI6MjA1OTk4MzU3NH0.eN0l8KuMK57ipLprKtrjjRzDFgdI1I0u79bzVWIaY-Q"
+
+def buscar_dados_supabase():
+    url = f"{SUPABASE_URL}/rest/v1/seguidores?select=*"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json"
+    }
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        return r.json()
+    else:
+        st.error("Erro ao buscar dados do Supabase.")
+        return []
 
 st.title("📊 Monitor de Seguidores - @megaeletronicosoficial")
 
-# Buscar dados do Supabase
-response = supabase.table("seguidores").select("*").order("data", desc=False).execute()
-dados = response.data
+dados = buscar_dados_supabase()
 
 if not dados:
     st.warning("Nenhum dado disponível.")
